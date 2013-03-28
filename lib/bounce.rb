@@ -3,6 +3,7 @@ APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 require 'rubygems'
 require 'sinatra'
 require 'haml'
+require 'yaml'
 require 'spice'
 
 require_relative 'configuration'
@@ -32,6 +33,18 @@ class Bounce < Sinatra::Application
     haml :index
   end
 
+  get '/nodes' do
+    @nodes = nodes
+  end
+
+  get '/balancers' do
+    @balancers = balancers
+  end
+
+  get '/clusters' do
+    @clusters = []
+  end
+  
   def balancers(opts = {})
     search(:cluster_name => opts.fetch(:cluster_name, false), :roles => [:balancer])
   end
@@ -41,29 +54,30 @@ class Bounce < Sinatra::Application
   end
 
   def search(opts = {})
-    node_query = query = []
+    node_criteria,criteria = [],[]
 
     cluster_name = opts.fetch(:cluster_name, false)
     if cluster_name
-      query << "(elasticsearch_cluster_name:#{cluster_name})" 
+      criteria << "(elasticsearch_cluster_name:#{cluster_name})" 
     end
 
     node_type = opts.fetch(:roles, [])
 
     if node_type.empty?
-      node_query << "(role:elasticsearch-*)"
+      node_criteria << "(role:elasticsearch-*)"
     else
-      node_query << "(role:elasticsearch-balancer)" if node_type.include? :balancer
-      node_query << "(role:elasticsearch-cluster)" if node_type.include? :cluster_nodes
-      node_query << "(role:elasticsearch-standalone)" if node_type.include? :standalone_nodes
+      node_criteria << "(role:elasticsearch-balancer)" if node_type.include? :balancer
+      node_criteria << "(role:elasticsearch-cluster)" if node_type.include? :cluster_nodes
+      node_criteria << "(role:elasticsearch-standalone)" if node_type.include? :standalone_nodes
     end
 
-    if node_query.count == 1
-      query << node_query
+    if node_criteria.count == 1
+      criteria << node_criteria.first
     else
-      query << "(#{node_query.join(' WAT ')})"
+      criteria << "(#{node_criteria.join(' OR ')})"
     end
-    
-    $spice.get('/search/nodes', :q => query)
+
+    query = criteria.join(" OR ")
+    $spice.search(:node, q: query)
   end
 end

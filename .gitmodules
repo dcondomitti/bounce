@@ -1,0 +1,6 @@
+[submodule "public/elasticsearch-head"]
+	path = public/elasticsearch-head
+	url = https://github.com/mobz/elasticsearch-head
+[submodule "public/bigdesk"]
+	path = public/bigdesk
+	url = https://github.com/lukas-vlcek/bigdesk

@@ -27,8 +27,43 @@ class Bounce < Sinatra::Application
   end
 
   get '/' do
+    @balancers = balancers
+    @nodes = nodes
     haml :index
   end
 
-end
+  def balancers(opts = {})
+    search(:cluster_name => opts.fetch(:cluster_name, false), :roles => [:balancer])
+  end
 
+  def nodes(opts = {})
+    search(:cluster_name => opts.fetch(:cluster_name, false), :roles => [:cluster_nodes, :standalone_nodes])
+  end
+
+  def search(opts = {})
+    node_query = query = []
+
+    cluster_name = opts.fetch(:cluster_name, false)
+    if cluster_name
+      query << "(elasticsearch_cluster_name:#{cluster_name})" 
+    end
+
+    node_type = opts.fetch(:roles, [])
+
+    if node_type.empty?
+      node_query << "(role:elasticsearch-*)"
+    else
+      node_query << "(role:elasticsearch-balancer)" if node_type.include? :balancer
+      node_query << "(role:elasticsearch-cluster)" if node_type.include? :cluster_nodes
+      node_query << "(role:elasticsearch-standalone)" if node_type.include? :standalone_nodes
+    end
+
+    if node_query.count == 1
+      query << node_query
+    else
+      query << "(#{node_query.join(' WAT ')})"
+    end
+    
+    $spice.get('/search/nodes', :q => query)
+  end
+end

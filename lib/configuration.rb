@@ -9,7 +9,12 @@ class Configuration
     end
 
     def chef_client_key
-      ENV['CHEF_CLIENT_KEY'] or raise StandardError.new('You must specify a chef client key (CHEF_CLIENT_KEY)')
+      if ENV['CHEF_CLIENT_KEY_PATH']
+        return File.open(ENV['CHEF_CLIENT_KEY_PATH']).read
+      elsif ENV['CHEF_CLIENT_KEY']
+        return ENV['CHEF_CLIENT_KEY']
+      end
+      raise StandardError.new('You must specify a chef client key (CHEF_CLIENT_KEY or CHEF_CLIENT_KEY_PATH)')
     end
 
     def chef_version

@@ -7,8 +7,8 @@
 			%strong
 				Cluster Name
 			= balancer['normal']['elasticsearch']['cluster_name']
-			%a{:href => "https://#{balancer.name}/elasticsearch-head" } elasticsearch-head
-			%a{:href => "https://#{balancer.name}/bigdesk" } bigdesk
+			%a{:href => elasticsearch_head_url(balancer.name) } elasticsearch-head
+			%a{:href => bigdesk_url(balancer.name) } bigdesk
 
 %h2
 	Individual Nodes
@@ -19,3 +19,5 @@
 			%strong
 				Cluster Name
 			= node['normal']['elasticsearch']['cluster_name']
+			%a{:href => elasticsearch_head_url(node.name) } elasticsearch-head
+			%a{:href => bigdesk_url(node.name) } bigdesk

@@ -1,10 +1,7 @@
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
-require 'rubygems'
-require 'sinatra'
-require 'haml'
+Bundler.require(:default)
 require 'yaml'
-require 'spice'
 
 require_relative 'configuration'
 
@@ -20,7 +17,7 @@ class Bounce < Sinatra::Application
 
   configure do
     set :root, APP_ROOT
-    set :public_folder, Proc.new { File.join(root, "static") }
+    set :public_folder, Proc.new { File.join(root, "public") }
   end
 
   before do
@@ -35,16 +32,19 @@ class Bounce < Sinatra::Application
 
   get '/nodes' do
     @nodes = nodes
+    haml :nodes
   end
 
   get '/balancers' do
     @balancers = balancers
+    haml :balancers
   end
 
   get '/clusters' do
     @clusters = []
+    haml :clusters
   end
-  
+
   def balancers(opts = {})
     search(:cluster_name => opts.fetch(:cluster_name, false), :roles => [:balancer])
   end
@@ -79,5 +79,15 @@ class Bounce < Sinatra::Application
 
     query = criteria.join(" OR ")
     $spice.search(:node, q: query)
+  end
+
+  helpers do
+    def bigdesk_url(hostname)
+      "/bigdesk/index.html?endpoint=http://#{hostname}:9200&refresh=3000&connect=true"
+    end
+
+    def elasticsearch_head_url(hostname)
+      "/elasticsearch-head/index.html?base_uri=http://#{hostname}:9200"
+    end
   end
 end

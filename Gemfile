@@ -4,4 +4,4 @@ gem 'sinatra'
 gem 'haml'
 gem 'spice'
 gem 'unicorn'
-
+gem 'shotgun'

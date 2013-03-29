@@ -24,5 +24,9 @@ class Configuration
     def chef_user_agent
       ENV['CHEF_USER_AGENT'] || 'Spice'
     end
+
+    def kibana_url
+      ENV['KIBANA_URL'] || 'https://kibana.example.com'
+    end
   end
 end

@@ -1,0 +1,4 @@
+%h2
+  Load Balancers
+  - @balancers.each do |balancer|
+    = render :haml, :_node, locals: {node: balancer}

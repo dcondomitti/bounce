@@ -2,10 +2,32 @@
   %head
     %meta{'http-equiv' => "Content-Type", 'content' => "text/html; charset=utf-8"}
     %title bounce
+    %link{rel: 'stylesheet', href:'css/bootstrap.css'}
+    %link{rel: 'stylesheet', href:'css/flat-ui.css'}
+    %link{rel: 'stylesheet', href:'css/bounce.css'}
   %body
-    %h1 ElasticSearch nodes
-    #nav
-      %a{href: "/nodes"} Nodes
-      %a{href: "/clusters"} Clusters
-      %a{href: "/balancers"} Load Balancers
-    = yield
+    .container
+      .demo-headline
+        %h1.demo-logo
+          Bounce
+          %small
+            search all of the things
+      .row
+        .span12
+          .navbar.navbar-inverse
+            .navbar-inner
+              .nav-collapse.collapse
+                %ul.nav
+                  %li
+                    %a{href: '/'} Home
+                  %li
+                    %a{href: '/nodes'} Nodes
+                  %li
+                    %a{href: '/balancers'} Load Balancers
+      .row
+        .span12
+          = yield
+      .row
+        .span12
+          %hr
+            = "bounce: rev/#{revision}"

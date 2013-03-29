@@ -1,5 +1,5 @@
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-
+REVISION = `git rev-parse HEAD || cat REVISION || echo 'unknown'`[0..8]
 Bundler.require(:default)
 require 'yaml'
 
@@ -25,8 +25,6 @@ class Bounce < Sinatra::Application
   end
 
   get '/' do
-    @balancers = balancers
-    @nodes = nodes
     haml :index
   end
 
@@ -38,11 +36,6 @@ class Bounce < Sinatra::Application
   get '/balancers' do
     @balancers = balancers
     haml :balancers
-  end
-
-  get '/clusters' do
-    @clusters = []
-    haml :clusters
   end
 
   def balancers(opts = {})
@@ -88,6 +81,18 @@ class Bounce < Sinatra::Application
 
     def elasticsearch_head_url(hostname)
       "/elasticsearch-head/index.html?base_uri=http://#{hostname}:9200"
+    end
+
+    def chef_url(hostname)
+      "https://manage.opscode.com/nodes/#{hostname}"
+    end
+
+    def kibana_url
+      Configuration.kibana_url
+    end
+
+    def revision
+      REVISION
     end
   end
 end

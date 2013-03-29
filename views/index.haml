@@ -1,23 +1,13 @@
-%h2 
-	Load Balancers
-	- @balancers.each do |balancer|
-		%h3
-			= balancer.name
-		%p
-			%strong
-				Cluster Name
-			= balancer['normal']['elasticsearch']['cluster_name']
-			%a{:href => elasticsearch_head_url(balancer.name) } elasticsearch-head
-			%a{:href => bigdesk_url(balancer.name) } bigdesk
+%p
+	%h2 What it do
+	This simple app lists all of the available ElasticSearch HAproxy load balancers and individual nodes that Chef knows about. It doesn't do any caching so all requests to the indivdual lists query Opscode so you'll probably get a lot of 502s. This was created to make it easier to explore indices and gather metrics about individual nodes. If you need to search through indices, use
+	%a{href: kibana_url} Kibana.
 
-%h2
-	Individual Nodes
-	- @nodes.each do |node|
-		%h3
-			= node.name
-		%p
-			%strong
-				Cluster Name
-			= node['normal']['elasticsearch']['cluster_name']
-			%a{:href => elasticsearch_head_url(node.name) } elasticsearch-head
-			%a{:href => bigdesk_url(node.name) } bigdesk
+%p
+	%h2 Bonus features
+	While es-head and Bigdesk are hosted on each load-balancer, they don't exist on standalone/embedded ES nodes. This app contains a copy of both es-head and bigdesk for accessing the clusters and individual nodes.
+
+%p
+	%h2.warning
+		Warning
+	Elasticsearch-head is a live editing tool, consider it to be PhpMyAdmin for ElasticSearch. You can edit and drop indices with it.

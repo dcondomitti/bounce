@@ -1,0 +1,13 @@
+%h3
+  = node.name
+.row
+  .span3
+    %h4.cluster_name
+      %strong
+        = node['normal']['elasticsearch']['cluster_name'] ? node['normal']['elasticsearch']['cluster_name'] : 'Standalone'
+  .span3
+    %a.btn.btn-large.btn-block.btn-info{:href => elasticsearch_head_url(node.name) } elasticsearch-head
+  .span3
+    %a.btn.btn-large.btn-block.btn-info{:href => bigdesk_url(node.name) } bigdesk
+  .span3
+    %a.btn.btn-large.btn-block.btn-info{:href => chef_url(node.name) } chef

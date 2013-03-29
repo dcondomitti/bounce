@@ -1,5 +1,7 @@
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 REVISION = `git rev-parse HEAD || cat REVISION || echo 'unknown'`[0..8]
+HOSTNAME = `hostname`
+
 Bundler.require(:default)
 require 'yaml'
 
@@ -89,10 +91,6 @@ class Bounce < Sinatra::Application
 
     def kibana_url
       Configuration.kibana_url
-    end
-
-    def revision
-      REVISION
     end
   end
 end
